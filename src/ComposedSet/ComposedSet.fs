@@ -1,4 +1,5 @@
-﻿module ComposedSet.FSharp.ComposedSet
+﻿namespace ComposedSet
+module ComposedSet =
     open Common
     type Indices = int array
     type Decomposed<'T> = private {indices : Indices; hash : int}
@@ -20,7 +21,6 @@
     let concat     xs ys = 
         let indices' = Array.append xs.indices ys.indices
         {indices = indices'; hash = Array.calchash indices'}
-    let (++)             = concat
     let trimend    xs ys = 
         if endswith xs ys then 
             let indices' = Array.sub xs.indices 0 (Array.length xs.indices - Array.length ys.indices)

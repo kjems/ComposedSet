@@ -59,12 +59,13 @@
   -->
   <Import Project="..\..\.paket\paket.targets" />
   <ItemGroup>
-    <None Include="Script.fsx" />
     <None Include="paket.references" />
     <None Include="paket.template" />
     <Compile Include="Common.fs" />
     <Compile Include="ComposedSet.fs" />
     <Compile Include="ComposedSetOfStrings.fs" />
+    <None Include="Script.fsx" />
+    <None Include="hack11a.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
