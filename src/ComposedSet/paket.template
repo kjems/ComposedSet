@@ -1,0 +1,23 @@
+type project
+owners
+    Kristian Kjems
+authors 
+    Kristian Kjems
+projectUrl
+    http://github.com/kjems/ComposedSet
+iconUrl
+    https://raw.githubusercontent.com/kjems/ComposedSet/master/docs/files/img/logo.png
+licenseUrl
+    http://github.com/kjems/ComposedSet/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2015
+tags
+    collection performance
+summary
+    A collection that decomposes it's elements into smaller chunks which is then stored in an array. Each element is then represented by indices into the array of parts. Many operation on the collection can be done by looking at the indices.
+description
+    Description not set
+
+
