@@ -6,7 +6,7 @@ A collection that decomposes it's elements into smaller chunks which is then sto
 
 Mono | .NET
 ---- | ----
-[![Mono CI Build Status](https://img.shields.io/travis/kjems/ComposedSet/master.svg)](https://travis-ci.org/kjems/ComposedSet) | [![.NET Build Status](https://img.shields.io/appveyor/ci/ComposedSet/master.svg)](https://ci.appveyor.com/project/ComposedSet)
+[![Mono CI Build Status](https://img.shields.io/travis/kjems/ComposedSet/master.svg)](https://travis-ci.org/kjems/ComposedSet) | [![.NET Build Status](https://img.shields.io/appveyor/ci/kjems/ComposedSet/master.svg)](https://ci.appveyor.com/project/kjems/ComposedSet)
 
 ## Maintainer(s)
 
