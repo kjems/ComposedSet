@@ -67,13 +67,17 @@
     <Compile Include="UnitTest.fs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ComposedSetOfStrings\ComposedSetOfStrings.fsproj">
+      <Name>ComposedSetOfStrings</Name>
+      <Project>{9a7dec6d-578b-4896-9042-b7e0f93ea15c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <ProjectReference Include="..\..\src\ComposedSet\ComposedSet.fsproj">
       <Name>ComposedSet</Name>
       <Project>{181bdfc4-24a7-4bb4-acad-323017a78e79}</Project>
