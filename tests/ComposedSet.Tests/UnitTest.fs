@@ -1,11 +1,32 @@
-﻿namespace ComposedSet.Test
+﻿module ComposedSet.Test
+open FsCheck
+open FsCheck.Xunit
+open ComposedSet
+open ComposedSetOfStrings
+    
+[<Property>]
+let consistentHashCode (validStr:NonNull<string>) = 
+    let a = ComposedSet.decompose validStr.Get
+    let b = ComposedSet.decompose validStr.Get
+    ComposedSet.calchash a = ComposedSet.calchash b
 
-open NUnit.Framework
+[<Property>]
+let trimEnd (validStrA : NonNull<string>) (validStrB : NonNull<string>) =
+    let a = validStrA.Get
+    let b = validStrB.Get
+    let trimEndStr  = if a.Length >= b.Length && a.Length > 0 && a.EndsWith(b) then a.Substring(0, a.Length - b.Length) else a
+    let trimEndCStr = ComposedSet.trimend (ComposedSet.decompose a) (ComposedSet.decompose b)
+    ComposedSet.compose trimEndCStr = trimEndStr
 
-module UnitTest =
-    open ComposedSet
-    open ComposedSetOfStrings
+let RunAllTests() =    
+    let config = { Config.Quick with MaxTest = 100000 }
+    Check.One(config, consistentHashCode)
+    Check.One(config, trimEnd)
+    
+RunAllTests()
 
+    
+    (*
     [<Test>]
     let GetHashCodeFS() =
         let abcd  = ComposedSet.decompose "A.B.C.D"
@@ -96,4 +117,5 @@ module UnitTest =
         Assert.That(dcc "0.B.C.D" , Is.Not.EqualTo("A.B.C.D"))
         Assert.That(dcc "a.B.C.D" , Is.Not.EqualTo("A.B.C.D"))
         Assert.That(dcc "B.B.C.D" , Is.Not.EqualTo("A.B.C.D"))
+    *)
        
