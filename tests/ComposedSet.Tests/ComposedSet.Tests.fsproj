@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>ComposedSet.Tests</RootNamespace>
     <AssemblyName>ComposedSet.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <Name>ComposedSet.Tests</Name>
     <TargetFrameworkProfile />
@@ -28,6 +28,7 @@
     </StartProgram>
     <StartArguments>
     </StartArguments>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -62,31 +63,6 @@
   </Target>
   -->
   <Import Project="..\..\.paket\paket.targets" />
-  <ItemGroup>
-    <Content Include="App.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="paket.references" />
-    <Compile Include="UnitTest.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ComposedSetOfStrings\ComposedSetOfStrings.fsproj">
-      <Name>ComposedSetOfStrings</Name>
-      <Project>{9a7dec6d-578b-4896-9042-b7e0f93ea15c}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <ProjectReference Include="..\..\src\ComposedSet\ComposedSet.fsproj">
-      <Name>ComposedSet</Name>
-      <Project>{181bdfc4-24a7-4bb4-acad-323017a78e79}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
@@ -241,4 +217,27 @@
       </ItemGroup>
     </When>
   </Choose>
+  <ItemGroup>
+    <None Include="paket.references" />
+    <Compile Include="UnitTest.fs" />
+    <Content Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ComposedSetOfStrings\ComposedSetOfStrings.fsproj">
+      <Name>ComposedSetOfStrings</Name>
+      <Project>{9a7dec6d-578b-4896-9042-b7e0f93ea15c}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <ProjectReference Include="..\..\src\ComposedSet\ComposedSet.fsproj">
+      <Name>ComposedSet</Name>
+      <Project>{181bdfc4-24a7-4bb4-acad-323017a78e79}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
