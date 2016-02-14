@@ -3,119 +3,60 @@ open FsCheck
 open FsCheck.Xunit
 open ComposedSet
 open ComposedSetOfStrings
-    
-[<Property>]
-let consistentHashCode (validStr:NonNull<string>) = 
-    let a = ComposedSet.decompose validStr.Get
-    let b = ComposedSet.decompose validStr.Get
-    ComposedSet.calchash a = ComposedSet.calchash b
+
+type Decomposable = string
+
+let randomSequence length xs = Gen.arrayOfLength length (Gen.elements xs)
+
+let randomSequenceOfChars =
+    let randomSequenceOfChars' length =
+        gen{ 
+            let chars = "ABCDEF./ ".ToCharArray()        
+            let! size = Gen.choose (0, length)
+            let body = randomSequence size chars
+            return! Gen.map (System.String : char[] -> System.String) body
+        }
+    Gen.sized randomSequenceOfChars'
+
+type MyGenerators = static member string = { new Arbitrary<Decomposable>() with override x.Generator = randomSequenceOfChars }
+Arb.register<MyGenerators>() |> ignore
 
 [<Property>]
-let trimEnd (validStrA : NonNull<string>) (validStrB : NonNull<string>) =
-    let a = validStrA.Get
-    let b = validStrB.Get
-    let trimEndStr  = if a.Length >= b.Length && a.Length > 0 && a.EndsWith(b) then a.Substring(0, a.Length - b.Length) else a
-    let trimEndCStr = ComposedSet.trimend (ComposedSet.decompose a) (ComposedSet.decompose b)
-    ComposedSet.compose trimEndCStr = trimEndStr
+let hashcode (validStrA:Decomposable) (validStrB:Decomposable) = 
+    let a = ComposedSet.decompose validStrA
+    let b = ComposedSet.decompose validStrB
+    let equalHash  = (ComposedSet.calchash a = ComposedSet.calchash b)
+    let equalValue = (a = b)
+    // Two difference values could have equal hash, but I expect from the hash function that to be extremly unlikly
+    equalHash = equalValue
 
-let RunAllTests() =    
-    let config = { Config.Quick with MaxTest = 100000 }
-    Check.One(config, consistentHashCode)
-    Check.One(config, trimEnd)
-    
-RunAllTests()
+[<Property>]
+let equals (validStrA : Decomposable) (validStrB : Decomposable) =
+    let a = ComposedSet.decompose validStrA
+    let b = ComposedSet.decompose validStrB            
+    (validStrA = validStrB) = (a = b)
 
-    
-    (*
-    [<Test>]
-    let GetHashCodeFS() =
-        let abcd  = ComposedSet.decompose "A.B.C.D"
-        let dcca  = ComposedSet.calchash << ComposedSet.decompose
-        Assert.That(dcca "A.B.C.D" = dcca "A.B.C.D" , Is.True)
-        Assert.That(ComposedSet.calchash abcd  = ComposedSet.calchash abcd  , Is.True)
-        Assert.That(dcca ""        = dcca ""        , Is.True)
-        Assert.That(dcca "A.B.C.D" = dcca "A.B.C.E" , Is.False)
-        Assert.That(dcca " "       = dcca ""        , Is.False)
-        
-    [<Test>]
-    let TrimEndFS() =
-        let abcd  = ComposedSet.decompose "A.B.C.D"
-        let ab    = ComposedSet.decompose "A.B."
-        let cd    = ComposedSet.decompose "C.D"
-        let empty = ComposedSet.decompose ""
-        Assert.That(ComposedSet.equals (ComposedSet.trimend abcd cd) ab,         Is.True)
-        Assert.That(ComposedSet.equals (ComposedSet.trimend ab ab) empty,        Is.True)
-        Assert.That(ComposedSet.equals (ComposedSet.trimend empty empty) empty,  Is.True)
-        Assert.That(ComposedSet.equals (ComposedSet.trimend ab empty) ab,        Is.True)
-        Assert.That(ComposedSet.equals (ComposedSet.trimend abcd ab) ab,         Is.False)
-        Assert.That(ComposedSet.equals (ComposedSet.trimend abcd ab) cd,         Is.False)
-   
-    [<Test>]
-    let OperatorAddFS() =
-        let (++)  = ComposedSet.concat
-        let abcd  = ComposedSet.decompose "A.B.C.D"
-        let a     = ComposedSet.decompose "A"
-        let b     = ComposedSet.decompose "B"
-        let c     = ComposedSet.decompose "C"
-        let d     = ComposedSet.decompose "D"
-        let ab    = ComposedSet.decompose "A.B"
-        let cd    = ComposedSet.decompose "C.D"
-        let dot   = ComposedSet.decompose "."
-        Assert.That(ComposedSet.equals abcd (ab ++ dot ++ cd), Is.True)
-        Assert.That(ComposedSet.equals (ab ++ dot ++ cd) (ab ++ dot ++ cd), Is.True)
-        Assert.That(ComposedSet.equals abcd (a ++ dot ++ b ++ dot ++ c ++ dot ++ d), Is.True)
-        Assert.That(abcd.GetHashCode() = (a ++ dot ++ b ++ dot ++ c ++ dot ++ d).GetHashCode(), Is.True)
-        Assert.That(ComposedSet.equals abcd (ab ++ dot ++ dot ++ cd), Is.False)
- 
-    [<Test>]
-    let EndsWithFS() =
-        let dcew a b = ComposedSet.endswith (ComposedSet.decompose a) (ComposedSet.decompose b)
-        Assert.That(dcew "A.B.C.D"     "A.B.C.D",Is.True)
-        Assert.That(dcew "A.B.C.D"     "A.B.C.D",Is.True)
-        Assert.That(dcew "B/A.C/A.C.D" "C.D",    Is.True) 
-        Assert.That(dcew "0.B.C.D"     "C.D",    Is.True) 
-        Assert.That(dcew "a.B.C.D"     "C.D",    Is.True)
-        Assert.That(dcew "A/B/C/D"     "A.B.C.D",Is.False)
-        Assert.That(dcew "A.B.CD"      "A.B.C.D",Is.False)
-        Assert.That(dcew "A.B.C.C"     "A.B.C.D",Is.False)
-        Assert.That(dcew "A.B.C.D."    "A.B.C.D",Is.False)
-        Assert.That(dcew "0.B.C.D"     "A.B.C.D",Is.False)
-        Assert.That(dcew "a.B.C.D"     "A.B.C.D",Is.False)
-        Assert.That(dcew "B.B.C.D"     "A.B.C.D",Is.False) 
-        Assert.That(dcew "A.B.C.D"     "C.D",    Is.True)
-        Assert.That(dcew " "           "A.B.C.D",Is.False)
-        Assert.That(dcew ""            "A.B.C.D",Is.False)
 
-    [<Test>]
-    let EqualsFS() =
-        let dceq a b = ComposedSet.equals (ComposedSet.decompose a) (ComposedSet.decompose b)
-        Assert.That(dceq "A.B.C.D"  "A.B.C.D", Is.True)
-        Assert.That(dceq "A.B.C.D"  "A.B.C.D", Is.True)
-        Assert.That(dceq " "        " ",       Is.True)
-        Assert.That(dceq ""         "",        Is.True)
-        Assert.That(dceq "A/B/C/D"  "A.B.C.D", Is.False)
-        Assert.That(dceq "A.B.CD"   "A.B.C.D", Is.False)
-        Assert.That(dceq "A.B.C.C"  "A.B.C.D", Is.False)
-        Assert.That(dceq "A.B.C.C"  "A.B.C.D", Is.False)
-        Assert.That(dceq "A.B.C.D." "A.B.C.D", Is.False)
-        Assert.That(dceq "0.B.C.D"  "A.B.C.D", Is.False)
-        Assert.That(dceq "a.B.C.D"  "A.B.C.D", Is.False)
-        Assert.That(dceq "B.B.C.D"  "A.B.C.D", Is.False)
-        Assert.That(dceq " "        "A.B.C.D", Is.False)
-        Assert.That(dceq ""         "A.B.C.D", Is.False)
+[<Property>]
+let trim (validStrA : Decomposable) (validStrB : Decomposable) =
+    let a = ComposedSet.decompose validStrA
+    let b = ComposedSet.decompose validStrB        
+    let end_trimmed = ComposedSet.trimend a b
+    let start_trimmed = ComposedSet.trimstart a end_trimmed
+    let conc = ComposedSet.concat end_trimmed start_trimmed
+    (ComposedSet.compose a) = (ComposedSet.compose conc)
 
-  
-    [<Test>]
-    let ComposeFS() =
-        let dcc = ComposedSet.compose << ComposedSet.decompose
-        Assert.That(dcc "A.B.C.D" , Is.EqualTo("A.B.C.D"))
-        Assert.That(dcc "A.B.C.D" , Is.Not.EqualTo("A/B/C/D"))
-        Assert.That(dcc "A/B/C/D" , Is.Not.EqualTo("A.B.C.D"))
-        Assert.That(dcc "A.B.CD"  , Is.Not.EqualTo("A.B.C.D"))
-        Assert.That(dcc "A.B.C.C" , Is.Not.EqualTo("A.B.C.D"))
-        Assert.That(dcc "A.B.C.D.", Is.Not.EqualTo("A.B.C.D"))
-        Assert.That(dcc "0.B.C.D" , Is.Not.EqualTo("A.B.C.D"))
-        Assert.That(dcc "a.B.C.D" , Is.Not.EqualTo("A.B.C.D"))
-        Assert.That(dcc "B.B.C.D" , Is.Not.EqualTo("A.B.C.D"))
-    *)
-       
+[<Property>]
+let concat (validStrA : Decomposable) (validStrB : Decomposable) (validStrC : Decomposable) =
+    let (++) = ComposedSet.concat
+    let a = ComposedSet.decompose validStrA
+    let b = ComposedSet.decompose validStrB
+    let c = ComposedSet.decompose validStrC
+    (ComposedSet.compose (a ++ b ++ c)) = (validStrA + validStrB + validStrC)
+
+
+let config = { Config.Quick with MaxTest = 10000}
+Check.One(config, hashcode)
+Check.One(config, equals)
+Check.One(config, trim)
+Check.One(config, concat)

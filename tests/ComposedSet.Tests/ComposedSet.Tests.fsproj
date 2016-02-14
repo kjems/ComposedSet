@@ -221,6 +221,7 @@
     <None Include="paket.references" />
     <Compile Include="UnitTest.fs" />
     <Content Include="App.config" />
+    <None Include="workbench.fsx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ComposedSetOfStrings\ComposedSetOfStrings.fsproj">
@@ -239,5 +240,6 @@
       <Project>{181bdfc4-24a7-4bb4-acad-323017a78e79}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <Reference Include="System.Numerics" />
   </ItemGroup>
 </Project>
