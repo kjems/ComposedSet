@@ -17,7 +17,7 @@ module String =
         sb.ToString()
         
 module List =
-    let calchash = List.fold (fun h x -> h * 7 + x) 13
+    let calchash = List.fold (fun h x -> h * 997 + x) 13
     
     let inline startsWith xs ys = 
         let rec startsWith' xs ys =
@@ -44,7 +44,7 @@ module List =
 
 
 module Array =
-    let calchash = Array.fold (fun h x -> h * 7 + x) 13
+    let calchash = Array.fold (fun h x -> h * 997 + x) 13
 
     let inline startsWith xs ys = 
         let xs_length = Array.length xs
