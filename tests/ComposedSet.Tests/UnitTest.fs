@@ -18,9 +18,9 @@ let randomSequenceOfChars =
         }
     Gen.sized randomSequenceOfChars'
 
-type Generators = static member Decomposable = { new Arbitrary<Decomposable>() with override x.Generator = randomSequenceOfChars }
+type ComposableGenerators = static member Decomposable() = { new Arbitrary<Decomposable>() with override x.Generator = randomSequenceOfChars }
 
-[<Property(Arbitrary=[|typeof<Generators>|])>]
+[<Property(Arbitrary=[|typeof<ComposableGenerators>|])>]
 let hashcode (validStrA:Decomposable) (validStrB:Decomposable) = 
     let a = ComposedSet.decompose validStrA
     let b = ComposedSet.decompose validStrB
@@ -29,14 +29,14 @@ let hashcode (validStrA:Decomposable) (validStrB:Decomposable) =
     // Two difference values could have equal hash, but I expect from the hash function that to be extremly unlikly
     equalHash = equalValue
 
-[<Property(Arbitrary=[|typeof<Generators>|])>]
+[<Property(Arbitrary=[|typeof<ComposableGenerators>|])>]
 let equals (validStrA : Decomposable) (validStrB : Decomposable) =
     let a = ComposedSet.decompose validStrA
     let b = ComposedSet.decompose validStrB            
     (validStrA = validStrB) = (a = b)
 
 
-[<Property(Arbitrary=[|typeof<Generators>|])>]
+[<Property(Arbitrary=[|typeof<ComposableGenerators>|])>]
 let trim (validStrA : Decomposable) (validStrB : Decomposable) =
     let a = ComposedSet.decompose validStrA
     let b = ComposedSet.decompose validStrB        
@@ -45,7 +45,7 @@ let trim (validStrA : Decomposable) (validStrB : Decomposable) =
     let conc = ComposedSet.concat end_trimmed start_trimmed
     (ComposedSet.compose a) = (ComposedSet.compose conc)
 
-[<Property(Arbitrary=[|typeof<Generators>|])>]
+[<Property(Arbitrary=[|typeof<ComposableGenerators>|])>]
 let concat (validStrA : Decomposable) (validStrB : Decomposable) (validStrC : Decomposable) =
     let (++) = ComposedSet.concat
     let a = ComposedSet.decompose validStrA
@@ -54,7 +54,7 @@ let concat (validStrA : Decomposable) (validStrB : Decomposable) (validStrC : De
     (ComposedSet.compose (a ++ b ++ c)) = (validStrA + validStrB + validStrC)
 
 
-let config = { Config.Quick with MaxTest = 10000; Arbitrary = [typeof<Generators>]}
+let config = { Config.Quick with MaxTest = 10000; Arbitrary = [typeof<ComposableGenerators>]}
 Check.One(config, hashcode)
 Check.One(config, equals)
 Check.One(config, trim)
