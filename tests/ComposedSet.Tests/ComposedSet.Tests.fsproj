@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>ComposedSet.Tests</RootNamespace>
     <AssemblyName>ComposedSet.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <Name>ComposedSet.Tests</Name>
     <TargetFrameworkProfile />
