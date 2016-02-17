@@ -1,4 +1,3 @@
 group Test
-FsCheck
 FsCheck.Xunit
 xunit.runners

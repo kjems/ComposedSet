@@ -5,14 +5,10 @@ group Build
   
   nuget SourceLink.Fake
   nuget FAKE
-  nuget FSharp.Formatting
-
-  github fsharp/FAKE modules/Octokit/Octokit.fsx
 
 group Test
   source https://nuget.org/api/v2
   
-  nuget FsCheck
   nuget FsCheck.Xunit
   nuget xunit.runners
   nuget xunit.runner.console
