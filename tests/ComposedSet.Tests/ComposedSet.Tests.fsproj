@@ -67,11 +67,11 @@
   -->
   <Import Project="..\..\.paket\paket.targets" />
   <ItemGroup>
-    <None Include="paket.references" />
     <Compile Include="UnitTest.fs" />
     <Compile Include="FsCheckAddin.fs">
       <Paket>True</Paket>
     </Compile>
+    <None Include="paket.references" />
     <Content Include="App.config" />
     <None Include="workbench.fsx" />
   </ItemGroup>
@@ -162,11 +162,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="NUnit.VisualStudio.TestAdapter">
-      <HintPath>..\..\packages\test\NUnitTestAdapter\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
-      <Private>True</Private>
-      <Paket>True</Paket>
-    </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\..\packages\test\NUnitTestAdapter\lib\nunit.core.dll</HintPath>
       <Private>True</Private>
