@@ -1,6 +1,7 @@
 ﻿module ComposedSet.FsCheck
+open NUnit.Framework
 open FsCheck
-open FsCheck.Xunit
+open FsCheck.NUnit
 open ComposedSet
 open ComposedSetOfStrings
 
@@ -18,10 +19,10 @@ let randomSequenceOfChars =
 
 type DecomposableGenerators = static member Decomposable() = randomSequenceOfChars |> Arb.fromGen
 
-[<Arbitrary(typeof<DecomposableGenerators>)>]
+[<TestFixture>]
 module Tests =
 
-    [<Property>]
+    [<Property(Arbitrary =[| typeof<DecomposableGenerators> |])>]
     let hashcode (validStrA:Decomposable) (validStrB:Decomposable) = 
         let a = ComposedSet.decompose validStrA
         let b = ComposedSet.decompose validStrB
@@ -30,13 +31,13 @@ module Tests =
         // Two difference values could have equal hash, but I expect from the hash function that to be extremly unlikly
         equalHash = equalValue
 
-    [<Property>]
+    [<Property(Arbitrary =[| typeof<DecomposableGenerators> |])>]
     let equals (validStrA : Decomposable) (validStrB : Decomposable) =
         let a = ComposedSet.decompose validStrA
         let b = ComposedSet.decompose validStrB            
         (validStrA = validStrB) = (a = b)
 
-    [<Property>]
+    [<Property(Arbitrary =[| typeof<DecomposableGenerators> |])>]
     let trim (validStrA : Decomposable) (validStrB : Decomposable) =
         let a = ComposedSet.decompose validStrA
         let b = ComposedSet.decompose validStrB        
@@ -45,7 +46,7 @@ module Tests =
         let conc = ComposedSet.concat end_trimmed start_trimmed
         (ComposedSet.compose a) = (ComposedSet.compose conc)
 
-    [<Property>]
+    [<Property(Arbitrary =[| typeof<DecomposableGenerators> |])>]
     let concat (validStrA : Decomposable) (validStrB : Decomposable) (validStrC : Decomposable) =
         let (++) = ComposedSet.concat
         let a = ComposedSet.decompose validStrA
@@ -54,7 +55,7 @@ module Tests =
         (ComposedSet.compose (a ++ b ++ c)) = (validStrA + validStrB + validStrC)
 
 
-let config = { Config.Quick with MaxTest = 10000; Arbitrary =[ typeof<DecomposableGenerators> ] }
+let config = { Config.Quick with MaxTest = 1000; Arbitrary =[ typeof<DecomposableGenerators> ] }
 Check.One(config, Tests.hashcode)
 Check.One(config, Tests.equals)
 Check.One(config, Tests.trim)

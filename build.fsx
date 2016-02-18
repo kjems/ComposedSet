@@ -89,7 +89,7 @@ Target "Build" (fun _ ->
 
 Target "RunTests" (fun _ ->
     !! testAssemblies
-    |> xUnit2 (fun p -> {p with HtmlOutputPath = Some ("TestResults.xml") })
+    |> NUnit (fun p -> {p with OutputFile = "TestResults.xml" })
 )
 
 // --------------------------------------------------------------------------------------
