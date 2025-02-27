@@ -50,7 +50,7 @@ profile "Concat" iterations (fun () ->
 profile "TrimEnd" iterations (fun () -> 
     ComposedSet.trimend fs_b fs_c |> ignore)
     
-let str_bigtext = System.IO.File.ReadAllText("..\..\data\gc.cpp.txt")
+let str_bigtext = System.IO.File.ReadAllText("data/gc.cpp.txt")
 
 let mutable fs_bigtext   = ComposedSet.decompose ""
 profile "Decompose Large Text 1st time" 1 (fun () -> (fs_bigtext   <- ComposedSet.decompose str_bigtext))      
