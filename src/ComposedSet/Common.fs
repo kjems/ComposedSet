@@ -80,3 +80,34 @@ module Array =
         else
             false
 
+    /// <summary>
+    /// Checks if xs contains ys as a contiguous subsequence.
+    /// Returns the starting index if found, or -1 if not found.
+    /// </summary>
+    let inline indexOf (xs: 'a array) (ys: 'a array) : int =
+        let xs_length = Array.length xs
+        let ys_length = Array.length ys
+        if ys_length = 0 then 0
+        elif ys_length > xs_length then -1
+        else
+            let mutable found = -1
+            let mutable i = 0
+            while i <= xs_length - ys_length && found < 0 do
+                let mutable j = 0
+                let mutable matching = true
+                while j < ys_length && matching do
+                    if xs.[i + j] = ys.[j] then
+                        j <- j + 1
+                    else
+                        matching <- false
+                if matching then
+                    found <- i
+                else
+                    i <- i + 1
+            found
+
+    /// <summary>
+    /// Checks if xs contains ys as a contiguous subsequence.
+    /// </summary>
+    let inline contains xs ys = indexOf xs ys >= 0
+
