@@ -1,8 +1,26 @@
-﻿module Common
+module Common
 open FSharp.Core.Operators.NonStructuralComparison
 
 module Perf =
-    let memoize f =
+    /// <summary>
+    /// Thread-safe memoization using ConcurrentDictionary.
+    /// Safe for use in multi-threaded scenarios (e.g., Unity editor, parallel builds).
+    /// </summary>
+    let memoize (f: 'a -> 'b) : 'a -> 'b =
+        let cache = System.Collections.Concurrent.ConcurrentDictionary<'a,'b>(HashIdentity.Structural)
+        fun x -> 
+            match cache.TryGetValue(x) with
+            | true, v -> v
+            | false, _ ->
+                let v = f x
+                cache.TryAdd(x, v) |> ignore
+                v
+
+    /// <summary>
+    /// Non-thread-safe memoization for single-threaded hot paths.
+    /// Use when you know the code won't be called concurrently.
+    /// </summary>
+    let memoizeUnsafe f =
         let cache = new System.Collections.Generic.Dictionary<_,_>(HashIdentity.Structural)
         fun x -> match cache.TryGetValue(x) with
                  | true, c -> c
@@ -110,4 +128,3 @@ module Array =
     /// Checks if xs contains ys as a contiguous subsequence.
     /// </summary>
     let inline contains xs ys = indexOf xs ys >= 0
-
