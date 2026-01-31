@@ -28,4 +28,15 @@ module ComposedSet =
                                 let indices' = Array.sub xs.indices (Array.length ys.indices) (Array.length xs.indices - Array.length ys.indices)
                                 {indices = indices'; hash = Array.calchash indices'}
                             else xs
-        
+
+    /// <summary>
+    /// Checks if xs contains ys as a contiguous subsequence.
+    /// Useful for finding patterns within decomposed paths/strings.
+    /// </summary>
+    let contains xs ys = Array.contains xs.indices ys.indices
+    
+    /// <summary>
+    /// Returns the index where ys first appears in xs, or -1 if not found.
+    /// </summary>
+    let indexOf xs ys = Array.indexOf xs.indices ys.indices
+
